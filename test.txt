@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Get the remote repository URL
+remote_url=$(git config --get remote.origin.url)
+
+# Check if remote URL is set
+if [ -z "$remote_url" ]; then
+  echo "No remote URL found. Make sure you are in a Git repository and a remote is set."
+  exit 1
+fi
+
+# Transform HTTPS URL to web URL format
+if [[ $remote_url == https* ]]; then
+  web_url=$(echo $remote_url | sed -e 's/https:\/\/\(.*\)@/https:\/\//' -e 's/.git$//')
+else
+  # Transform SSH URL to web URL format
+  web_url=$(echo $remote_url | sed -e 's/git@\(.*\):/https:\/\/\1\//' -e 's/.git$//')
+fi
+
+# Print the URL to create a new pull request
+echo "Pull request URL:"
+echo "${web_url}/pull-requests/new"
+
